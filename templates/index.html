@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>メモ帳</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+
+    <style>
+        form {
+            display: inline;
+        }
+
+        li {
+            list-style: none;
+        }
+
+        .input {
+            width: 500px;
+        }
+    </style>
+    </head>
+<body>
+    <div class="container">
+        <section class="section is-size-1">メモ帳</section>
+        <!-- 入力部分 -->
+        <section class="section">
+            <p class="is-size-3">メモを入力してください</p>
+            <form method="post" action="/">
+                <input type="text" name="task" placeholder="タスク" class="input">
+                <div class="select">
+                    <select name="category_id" id="">
+                        {% for category in categories %}    
+                        <option value="{{ category['id'] }}">{{ category['category'] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <input type="submit" value="送信" class="button is-primary">
+            </form>
+        </section>
+        <!-- 出力部分 -->
+        <section class="section">
+            <p class="is-size-3">現在のメモ</p>
+            <ul>
+                {% for task in tasks %}
+                <li class="mb-3">
+                    <!-- 編集 -->
+                    <form method="post" action="/edit">
+                        <input type="text" name="task" value="{{ task['task'] }}" class="input">
+                        <div class="select">
+                            <select name="category_id">
+                                {% for category in categories %}    
+                                    <option value="{{ category['id'] }}" 
+                                        {% if category['id'] == task['category_id'] %}
+                                            selected
+                                        {% endif %}
+                                    >
+                                    {{ category['category'] }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <input type="hidden" name="task_id" value="{{ task['id'] }}">
+                        <input type="submit" value="編集" class="button is-warning">
+                    </form>
+                    <!-- 削除 -->
+                    <form method="post" action="/finish">
+                        <input type="hidden" name="task_id" value="{{ task['id'] }}">
+                        <input type="submit" value="削除" class="button is-danger">
+                    </form>
+                </li>
+                {% endfor %}
+            </ul>
+        </section>
+    </div>
+</body>
+</html>
