@@ -24,7 +24,7 @@ def init_db():
 init_db()
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 def index():
     try:
         db = get_db()
@@ -33,14 +33,23 @@ def index():
             # tasks = db.execute('SELECT * FROM tasks ').fetchall()
             tasks = db.execute('SELECT * FROM tasks LEFT JOIN categories on tasks.category_id = categories.id').fetchall()
             categories = db.execute('SELECT * FROM categories').fetchall()
-        if request.method == 'POST':
-            task = request.form['task']
-            category = request.form['category_id']
-            with db:
-                db.execute('INSERT INTO tasks (task, category_id) VALUES (?, ?)', (task, category))
-            return redirect('/')
-        
+
         return render_template('index.html', tasks=tasks, categories=categories)
+    finally:
+        db.close()
+
+
+@app.route('/', methods=['POST'])
+def create():
+    task = request.form['task']
+    category_id = int(request.form['category_id'])
+
+    try:
+        db = get_db()
+        with db:
+            db.execute('INSERT INTO tasks (task, category_id) VALUES (?, ?)', (task, category_id,))
+
+        return redirect('/')
     finally:
         db.close()
 
