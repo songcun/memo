@@ -61,7 +61,7 @@ def finish():
         task_id = int(request.form['task_id'])
 
         with db:
-            db.execute('DELETE FROM tasks WHERE id = ?', (task_id, )) # 後ろにスペースが必要
+            db.execute('DELETE FROM tasks WHERE id = ?', (task_id,))  # タプルにするためにカンマが必要
         
         return redirect('/')
     finally:
